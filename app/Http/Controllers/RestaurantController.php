@@ -43,8 +43,32 @@ class RestaurantController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q'); // ambil query dari ?q=
+        $data = $this->api->getList();
+        $restaurants = $data['restaurants'] ?? [];
 
-        // Untuk sementara, cukup return view sederhana
-        return view('restaurants.search', compact('query'));
+        // Filter berdasarkan nama, kategori, dan menu
+        $filtered = collect($restaurants)->filter(function ($restaurant) use ($query) {
+            if (!$query) return true;
+            $q = strtolower($query);
+            $name = strtolower($restaurant['name'] ?? '');
+            $description = strtolower($restaurant['description'] ?? '');
+            $city = strtolower($restaurant['city'] ?? '');
+            $categories = isset($restaurant['categories']) ? strtolower(implode(' ', array_column($restaurant['categories'], 'name'))) : '';
+            $menus = isset($restaurant['menus']) ? strtolower(implode(' ', array_merge(
+                isset($restaurant['menus']['foods']) ? array_column($restaurant['menus']['foods'], 'name') : [],
+                isset($restaurant['menus']['drinks']) ? array_column($restaurant['menus']['drinks'], 'name') : []
+            ))) : '';
+
+            return strpos($name, $q) !== false
+                || strpos($description, $q) !== false
+                || strpos($city, $q) !== false
+                || strpos($categories, $q) !== false
+                || strpos($menus, $q) !== false;
+        })->values()->all();
+
+        return view('restaurants.search', [
+            'query' => $query,
+            'restaurants' => $filtered,
+        ]);
     }
 }
