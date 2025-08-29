@@ -9,6 +9,5 @@ Route::get('/', function () {
 });
 
 Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+Route::get('/restaurants/search', [RestaurantController::class, 'search'])->name('restaurants.search');
 Route::get('/restaurants/{id}', [RestaurantController::class, 'show'])->name('restaurants.show');
-
-

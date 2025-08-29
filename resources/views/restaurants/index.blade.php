@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    @extends('layouts.app')
     <h1>Daftar Restoran</h1>
 
 

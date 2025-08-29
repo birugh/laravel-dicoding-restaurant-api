@@ -39,4 +39,12 @@ class RestaurantController extends Controller
             'restaurant' => $data['restaurant']
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q'); // ambil query dari ?q=
+
+        // Untuk sementara, cukup return view sederhana
+        return view('restaurants.search', compact('query'));
+    }
 }
